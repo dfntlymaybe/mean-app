@@ -1,3 +1,7 @@
 .no-redius{
   border-radius: 0;
 }
+
+a{
+  cursor: pointer;
+}

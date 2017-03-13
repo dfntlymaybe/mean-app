@@ -1,11 +1,6 @@
 import { Component, OnInit, Injectable } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
-import { Http, Response, Headers, RequestOptions } from '@angular/http';
-import {Observable} from 'rxjs/Rx';
-
-// Import RxJs required methods
-import 'rxjs/add/operator/map';
-import 'rxjs/add/operator/catch';
+import { AuthService } from '../auth.service';
 
 @Component({
   selector: 'app-register',
@@ -20,14 +15,9 @@ export class RegisterComponent {
         email: ["", Validators.required]
       });
 
-      constructor(public fb: FormBuilder, private http: Http) {}
+      constructor(public fb: FormBuilder, private auth: AuthService) {}
 
-      doRegister(event) {
-
-        console.log(this.registerForm.value);
-
-        return this.http.post('api/register', this.registerForm.value)
-        .map((res:Response) => res.json())
-        .catch((error:any) => Observable.throw(error.json().error || 'Server error'));
+      doRegister() {
+        // this.auth.register(this.registerForm.value);
       }
 }

@@ -3,17 +3,26 @@ import { NgModule } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { ReactiveFormsModule } from '@angular/forms';
 import { HttpModule } from '@angular/http';
+import { RouterModule, Routes, CanActivate } from '@angular/router';
 
+import { AuthGuardService } from './auth-guard.service';
+import { AuthService } from './auth.service';
+import { DealsService } from './deals.service'
 import { AppComponent } from './app.component';
 import { HomeComponent } from './home/home.component';
 import { LoginComponent } from './login/login.component';
 import { RegisterComponent } from './register/register.component';
-import { RouterModule, Routes } from '@angular/router';
+import { PublicDealsComponent } from './public-deals/public-deals.component';
+import { ProfileComponent } from './profile/profile.component';
+
 
 const appRoutes: Routes = [
-{path: '', component: HomeComponent},
+{path: 'home', component: HomeComponent},
 {path: 'login', component: LoginComponent},
-{path: 'register', component: RegisterComponent}
+{path: 'register', component: RegisterComponent},
+{path: 'deals', component: PublicDealsComponent},
+{path: 'profile', component: ProfileComponent, canActivate: [AuthGuardService]},
+{path: '', redirectTo: 'home', pathMatch: 'full'}
 ];
 
 @NgModule({
@@ -21,7 +30,9 @@ const appRoutes: Routes = [
     AppComponent,
     HomeComponent,
     LoginComponent,
-    RegisterComponent
+    RegisterComponent,
+    PublicDealsComponent,
+    ProfileComponent
   ],
   imports: [
     RouterModule.forRoot(appRoutes),
@@ -30,7 +41,7 @@ const appRoutes: Routes = [
     ReactiveFormsModule,
     HttpModule
   ],
-  providers: [],
+  providers: [AuthService, DealsService, AuthGuardService],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

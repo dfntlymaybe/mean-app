@@ -1,5 +1,6 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, Injectable } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
+import { AuthService } from '../auth.service';
 
 @Component({
   selector: 'app-login',
@@ -13,11 +14,10 @@ export class LoginComponent {
       password: ["", Validators.required]
     });
 
-    constructor(public fb: FormBuilder) {}
+    constructor(public fb: FormBuilder, private auth: AuthService) {}
 
-    doLogin(event) {
-      console.log(event);
-      console.log(this.loginForm.value.password);
+    doLogin() {
+      // this.auth.login(this.loginForm.value);
     }
 
 }

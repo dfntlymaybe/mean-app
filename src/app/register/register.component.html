@@ -4,7 +4,7 @@
       <h2>
         Register
       </h2>
-      <form [formGroup]="registerForm" (ngSubmit)="doRegister($event)">
+      <form [formGroup]="registerForm" (ngSubmit)="doRegister()">
         <div class="form-group">
           <label for="email">Email address</label>
           <input formControlName="email" type="email" class="form-control" aria-describedby="emailHelp" placeholder="Enter email">

@@ -1,122 +1,72 @@
 // Get dependencies
 const express = require('express');
 const path = require('path');
-const http = require('http');
+const jwt = require('express-jwt');
 const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
-const passport = require('passport');
-const expressSession = require('express-session');
-const LocalStrategy = require('passport-local').Strategy;
 
-mongoose.connect('mongodb://localhost/mean-app');
+// mongoose.connect('mongodb://localhost/mean-app');
 
-const User = require("./server/UserModel");
 // Get our API routes
 const api = require('./server/routes/api');
 
 const app = express();
 
-app.use(expressSession({secret: 'mySecretKey'}));
-app.use(passport.initialize());
-app.use(passport.session());
-
-// Parsers for POST data
-app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({ extended: false }));
-
 // Point static path to dist
 app.use(express.static(path.join(__dirname, 'dist')));
 app.use(express.static('node_modules'));
 
-//We want to send the client only username and id
-passport.serializeUser(function (user, done) {
-  user = {
-    username: user.username,
-    _id: user._id
-  };
 
-  done(null, user);
-});
-
-passport.deserializeUser(function (user, done) {
-  user = {
-    username: user.username,
-    _id: user._id
-  };
-
-  done(null, user);
-});
-
-//register new user
-passport.use('register', new LocalStrategy(function (username, password, done) {
-  User.findOne({ 'username': username }, function (err, user) {
-    // In case of any error return
-    if (err) {
-      console.log('Error in SignUp: ' + err);
-      return done(err);
-    }
-
-    // already exists
-    if (user) {
-      console.log('User already exists');
-      return done(null, false);
-    } else {
-      // if there is no user with that matches
-      // create the user
-      var newUser = new User();
-
-      // set the user's local credentials
-      newUser.username = username;
-      newUser.password = password;    // Note: Should create a hash out of this plain password!
-      console.log(newUser.username + ' ' + newUser.password);
-      // save the user
-      newUser.save(function (err) {
-        if (err) {
-          console.log('Error in Saving user: ' + err);
-          throw err;
-        }
-
-        console.log('User Registration successful');
-        return done(null, newUser);
-      });
-    }
-  });
-}));
-
-//Authenticate middleware for login
-passport.use('login', new LocalStrategy(function (username, password, done) {
-  User.findOne({ 'username': username, 'password': password }, function (err, user) {
-    if (err) {
-      return done(err); 
-    }
-
-    if (!user) { 
-      return done(null, false); 
-    }
-
-    return done(null, user);
-  });
-}));
-
-//New User registration
-app.post('/register', passport.authenticate('register'), function (req, res) {
-  console.log("register requested " + req.body);
-  res.json(req.user);
-});
-
-//listen to /login post requests
-app.post('/login', passport.authenticate('login'), function (req, res) {
-  console.log("login requested " + req.body);
-  res.json(req.user);
+const authCheck = jwt({
+  secret: 'AIagBKXNB3yL_ny8DGegILwTrEgEfjVj5tHCgcOs4NFXT3meMzrof6F',
+  audience: 'kBgNCNMitAa04BdrkjlmQr6zMj0O8sm6'
 });
 
 // Set our api routes
 app.use('/api', api);
 
-// Catch all other routes and return the index file
-app.get('*', (req, res) => {
-  res.sendFile(path.join(__dirname, 'dist/index.html'));
+app.get('/profile', authCheck, (req,res)=>{
+  console.log(req);
+  let user = {
+    username: 'ok',
+    email: 'ok@ok.com'
+  };
+  res.json(user);
+})
+
+app.get('/deals/public', function(req, res){
+  console.log('request deals');
+  res.json([{
+    id: 1234,
+    name: 'Muse concert in berlin',
+    description: 'Description of Product 1...',
+    img: 'https://muse-cdn.warnerartists.com/ugc-1/gallery/4196/10722_original.jpg',
+    bestValue: 199.99, // Original price of product
+    startingAt: 129.99 // Sale price of product
+},
+{
+    id: 1235,
+    name: 'el classico',
+    img: 'http://akns-images.eonline.com/eol_images/Entire_Site/201295/reg_1024.soccer.mh.100512.jpg',
+    description: 'Description of Product 2...',
+    bestValue: 299.99, // Original price of product
+    startingAt: 169.99 // Sale price of product
+},
+{
+    id: 1236,
+    name: 'NBA playoffs game',
+    img: 'http://i2.cdn.turner.com/nba/nba/dam/assets/160413134216-playoffs-2016-official-t1-creative.home-t1.jpg',
+    description: 'Description of Product 3...',
+    bestValue: 499.99, // Original price of product
+    startingAt: 249.99 // Sale price of product
+}]);
 });
+
+app.get('/*', function (req, res) {
+  console.log("New Client")
+  res.sendFile(__dirname + "/dist/index.html");
+});
+
 
 /**
  * Get port from environment and store in Express.
@@ -127,9 +77,9 @@ app.set('port', port);
 /**
  * Create HTTP server.
  */
-const server = http.createServer(app);
+// const server = http.createServer(app);
 
 /**
  * Listen on provided port, on all network interfaces.
  */
-server.listen(port, () => console.log(`API running on localhost:${port}`));
+app.listen(port, () => console.log(`API running on localhost:${port}`));

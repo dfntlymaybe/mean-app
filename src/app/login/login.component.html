@@ -4,7 +4,7 @@
       <h2>
         Log-in
       </h2>
-      <form [formGroup]="loginForm" (ngSubmit)="doLogin($event)">
+      <form [formGroup]="loginForm" (ngSubmit)="doLogin()">
         <div class="form-group">
             <label for="username">User name</label>
             <input formControlName="username" type="text" class="form-control" aria-describedby="emailHelp" placeholder="Enter User Name">

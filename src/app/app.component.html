@@ -2,19 +2,19 @@
 <nav class="navbar navbar-inverse no-redius">
   <div class="container-fluid">
     <ul class="nav navbar-nav">
-     <li> <a routerLink="/" routerLinkActive="active">Home</a></li>
+     <li><a routerLink="/" routerLinkActive="active">Home</a></li>
+     <li><a routerLink="/profile" routerLinkActive="active" *ngIf="authService.loggedIn()">Profile</a></li>
+
     </ul>
 
     <ul class="nav navbar-nav pull-right">
-      <li *ngIf="isLoggedIn">{{currentUser.username}}</li>
-      <li *ngIf="!isLoggedIn"><a a routerLink="/register" routerLinkActive="active">Register</a></li>
-      <li *ngIf="!isLoggedIn"><a a routerLink="/login" routerLinkActive="active">Log In</a></li>
-      <li *ngIf="isLoggedIn"><a href="#">Log Out</a></li>
+      <li *ngIf="authService.loggedIn()">{{currentUser.username}}</li>
+      <!-- <li *ngIf="!isLoggedIn"><a routerLink="/register" routerLinkActive="active">Register</a></li> -->
+      <li *ngIf="!authService.loggedIn()"><a (click)=authService.login()>Log In</a></li>
+      <li *ngIf="authService.loggedIn()"><a (click)=authService.logout()>Log Out</a></li>
     </ul>
   </div>
 </nav>
 
 <router-outlet></router-outlet>
-<!-- <app-home></app-home>
-<app-register></app-register>
-<app-login></app-login> -->
+
